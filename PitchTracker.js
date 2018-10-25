@@ -146,6 +146,3 @@ client.on("message", (message) => {
   }
 
 });
-
-
-client.login("NDMzMzExMjMwMTQ5NjU2NTc2.DgIEvA.7QXk3i98QWuyzdOPBwSQajMZB4o");
