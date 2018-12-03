@@ -1,11 +1,17 @@
+/*  PitchTracker.js
+    Josh Aidelman
+    Last updated October 19 */
+
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-var fs = require('fs');
-var space;
-var swing;
-var avg = 0;
-var curNum = 0;
+var fs = require('fs'); //For files
+
+var space; //Stores where the " " is in a string
+var pitch; //Stores the pitch
+
+var avg = 0; //Stores the average
+var curNum = 0; //Stores where we are in the file
 var pos = 0;
 var newLine;
 var count = 0;
@@ -14,12 +20,15 @@ var found = false;
 var num = [];
 var num2 = [];
 var avg2 = 0;
-var boop;
+var wrappedTotal;
+var name;
 var max;
 var min;
 var result;
 var total = 0;
 var secAv = 0;
+var barGraph = [10];
+var barString = [10];
 
 client.on("ready", () => {
   console.log("I am ready!");
@@ -28,11 +37,16 @@ client.on("ready", () => {
 client.on("message", (message) => {
 
   /* Prints your list */
-  if(message.content.startsWith("!list")){
+  if(message.content.startsWith("!list") || message.content.startsWith("!bar")){
 
     /* Finds all values */
     space = message.content.search(" ");
     name = message.content.substring(space + 1);
+
+    //Resets bar graph values
+    for(var j = 0; j<10; j++){
+      barGraph[j] = 0;
+    }
 
     if (fs.existsSync('Files/' + name + '.txt')) {
       var text = fs.readFileSync('Files/' + name + '.txt').toString('utf-8');
@@ -59,43 +73,71 @@ client.on("message", (message) => {
           total += Number(curNum);
           pos = pos+digits+1;
 
+          barGraph[Math.floor(Number(curNum)/100)] += 1;
+
           num[count] = Number(curNum);
           count++;
         }
       }while(Number(curNum));
-      boop = ((avg*1.00/count)-1000);
-      if(boop<0) boop += 1000;
+      wrappedTotal = ((avg*1.00/count)-1000);
+      if(wrappedTotal<0) wrappedTotal += 1000;
 
-      /* Sends message */
-      message.channel.send('\t' + name + '\t');
-      message.channel.send('-----------------------');
-      message.channel.send(text);
-      message.channel.send('Average (Wrapped Range): ' + boop.toFixed(2));
-      message.channel.send('Average (Normal): ' + (total*1.00/count).toFixed(2))
+      if(message.content.startsWith("!list")){
 
-      for(var i = 0; i<count; i++){
+        /* Sends message */
+        message.channel.send('\t' + name + '\t');
+        message.channel.send('-----------------------');
+        message.channel.send(text);
+        message.channel.send('Average (Wrapped Range): ' + wrappedTotal.toFixed(2));
+        message.channel.send('Average (Normal): ' + (total*1.00/count).toFixed(2))
 
-        num2[i] = num[i] - (total*1.00/count);
-        num2[i] = num2[i]*num2[i];
+        for(var i = 0; i<count; i++){
 
-        max = Math.max(num[i], (boop));
-        min = Math.min(num[i], (boop));
-        result = Math.min(max - min, 1000 - max + min);
+          num2[i] = num[i] - (total*1.00/count);
+          num2[i] = num2[i]*num2[i];
 
-        num[i] = result;
-        num[i] = num[i]*num[i];
+          max = Math.max(num[i], (wrappedTotal));
+          min = Math.min(num[i], (wrappedTotal));
+          result = Math.min(max - min, 1000 - max + min);
 
+          num[i] = result;
+          num[i] = num[i]*num[i];
+
+        }
+        for(var j = 0; j<count; j++){
+          avg2 = avg2 + num[j];
+          secAv = secAv + num2[j];
+        }
+        avg2 = Math.sqrt(avg2/count);
+        secAv = Math.sqrt(secAv/count);
+
+        message.channel.send('Standard Deviation (Wrapped): ' + (avg2*1.00).toFixed(2));
+        message.channel.send('Standard Deviation (Normal): ' + (secAv*1.00).toFixed(2));
       }
-      for(var j = 0; j<count; j++){
-        avg2 = avg2 + num[j];
-        secAv = secAv + num2[j];
+      else{
+
+        barString[0] = "       ";
+        barString[1] = " ";
+        barString[2] = "";
+        barString[3] = "";
+        barString[4] = "";
+        barString[5] = "";
+        barString[6] = "";
+        barString[7] = "";
+        barString[8] = "";
+        barString[9] = "";
+
+        for(var j = 0; j<10; j++){
+
+          for(var k = 0; k<barGraph[j]; k++){
+            barString[j] += "#";
+          }
+
+        }
+        for(var i = 0; i<10; i++){
+          message.channel.send( (100*i) + "-" + ((100*i)+99) + ": " + barString[i]);
+        }
       }
-      avg2 = Math.sqrt(avg2/count);
-      secAv = Math.sqrt(secAv/count);
-
-      message.channel.send('Standard Deviation (Wrapped): ' + (avg2*1.00).toFixed(2));
-      message.channel.send('Standard Deviation (Normal): ' + (secAv*1.00).toFixed(2));
-
       avg2 = 0;
       num = [];
       num2 = [];
@@ -107,45 +149,61 @@ client.on("message", (message) => {
       total = 0;
       secAv = 0;
       found = false;
+
     }
   }
   else if(message.content.startsWith("!help")){
-    message.channel.send("Type \"!name ###\" to store your swing");
-    message.channel.send("Type \"!list name\" to view your past swings")
+    message.channel.send("Type \"!<name> ###\" to store your pitch");
+    message.channel.send("Type \"!list <name>\" to view past pitches");
+    message.channel.send("Type \"!bar <name>\" to view what ranges are most common")
     message.channel.send("This bot is CASE SENSITIVE so make sure you use the same case each time");
 
     /*message.channel.send("To extrapolate the data:\n");
 
     message.channel.send("If you think they are going to pitch above 500, do Avg(Wrapped)+STD(Wrapped")
-    message.channel.send("Average(Wrapped Range): Where their average pitch/swing is\n");
+    message.channel.send("Average(Wrapped Range): Where their average pitch/pitch is\n");
     message.channel.send("Average(Normal): If this is > 500, they generally use high numbers. If it's < 500, they generally use low numbers. The further away from 500, the more often they go to that side\n");
     message.channel.send("Standard Deviation(Normal): How far they normally pitch away from their average. Take Average(Wrapped) +- STD(Normal) to find good range\n");
-    message.channel.send("Standard Deviation(Wrapped): Not sure exactly how to use this. Someone lmk if you figure it out\n"); */
+    message.channel.send("Standard Deviation(Wrapped): Not sure exactly how to use this. Someone lmk if you figure it out\n");
 
-    message.channel.send("EXAMPLE:\nAvg(Wrapped) = 480\nAvg(Normal) = 482\nSTD(Normal) = 245\nSince Avg(Normal) is below 500, do 480-245 to get 235\n");
+    message.channel.send("EXAMPLE:\nAvg(Wrapped) = 480\nAvg(Normal) = 482\nSTD(Normal) = 245\nSince Avg(Normal) is below 500, 480-245 to get 235\n"); */
   }
   else if(message.content.startsWith("chuck") || message.content.startsWith("Chuck")){
     message.channel.send("more like clam chowder lol");
   }
-  else if(message.content.startsWith("Peppers") || message.content.startsWith("peppers")){
+  else if(message.content.startsWith("Peppers") || message.content.startsWith("peppers") || message.content.startsWith("Pep") || message.content.startsWith("pep")){
     message.channel.send(":hot_pepper: :hot_pepper: :hot_pepper:");
   }
-  /* Stores swings */
+  else if(message.content.startsWith("Joe") || message.content.startsWith("joe")){
+    message.channel.send(":joesux:");
+  }
+  else if(message.content.startsWith("Kegs") || message.content.startsWith("kegs")){
+    message.channel.send("ily Kegs <3");
+  }
+  else if(message.content.startsWith("Dickshot") || message.content.startsWith("dickshot")){
+    message.channel.send("Yolanda is just a blogger");
+  }
+  else if(message.content.startsWith("Steel") || message.content.startsWith("steel")){
+    message.channel.send("^ that guy's got a big pipe");
+  }
+  else if(message.content.includes("Slayers") || message.content.includes("slayers") || message.content.includes("FTS") || message.content.includes("fts")){
+    message.channel.send("FTS!");
+  }
+  /* Stores pitchs */
   else if(message.content.startsWith("!")){
 
     /* Finds all values */
     space = message.content.search(" ");
-    swing = message.content.substring(space + 1);
+    pitch = message.content.substring(space + 1);
     name = message.content.substring(1,space);
 
     /* Appends to file and sends confirmation menu */
-    fs.appendFile('Files/' + name + '.txt', swing + '\n', function(err){
+    fs.appendFile('Files/' + name + '.txt', pitch + '\n', function(err){
       if(err) throw err;
     });
-    message.channel.send('Saved ' + swing + ' for ' + name);
+    message.channel.send('Saved ' + pitch + ' for ' + name);
   }
-
 });
 
 
-client.login("NDMzMzExMjMwMTQ5NjU2NTc2.DgIEvA.7QXk3i98QWuyzdOPBwSQajMZB4o");
+client.login("NDMzMzExMjMwMTQ5NjU2NTc2.Dub5Bw.7SsGGolV0w2sw7kOPj4viJU4huI");
