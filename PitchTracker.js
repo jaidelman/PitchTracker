@@ -204,6 +204,3 @@ client.on("message", (message) => {
     message.channel.send('Saved ' + pitch + ' for ' + name);
   }
 });
-
-
-client.login("NDMzMzExMjMwMTQ5NjU2NTc2.Dub5Bw.7SsGGolV0w2sw7kOPj4viJU4huI");
