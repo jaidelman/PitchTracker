@@ -9,7 +9,6 @@ var fs = require('fs'); //For files
 
 var space; //Stores where the " " is in a string
 var pitch; //Stores the pitch
-
 var avg = 0; //Stores the average
 var curNum = 0; //Stores where we are in the file
 var pos = 0;
@@ -168,27 +167,6 @@ client.on("message", (message) => {
 
     message.channel.send("EXAMPLE:\nAvg(Wrapped) = 480\nAvg(Normal) = 482\nSTD(Normal) = 245\nSince Avg(Normal) is below 500, 480-245 to get 235\n"); */
   }
-  else if(message.content.startsWith("chuck") || message.content.startsWith("Chuck")){
-    message.channel.send("more like clam chowder lol");
-  }
-  else if(message.content.startsWith("Peppers") || message.content.startsWith("peppers") || message.content.startsWith("Pep") || message.content.startsWith("pep")){
-    message.channel.send(":hot_pepper: :hot_pepper: :hot_pepper:");
-  }
-  else if(message.content.startsWith("Joe") || message.content.startsWith("joe")){
-    message.channel.send(":joesux:");
-  }
-  else if(message.content.startsWith("Kegs") || message.content.startsWith("kegs")){
-    message.channel.send("ily Kegs <3");
-  }
-  else if(message.content.startsWith("Dickshot") || message.content.startsWith("dickshot")){
-    message.channel.send("Yolanda is just a blogger");
-  }
-  else if(message.content.startsWith("Steel") || message.content.startsWith("steel")){
-    message.channel.send("^ that guy's got a big pipe");
-  }
-  else if(message.content.includes("Slayers") || message.content.includes("slayers") || message.content.includes("FTS") || message.content.includes("fts")){
-    message.channel.send("FTS!");
-  }
   /* Stores pitchs */
   else if(message.content.startsWith("!")){
 
@@ -202,5 +180,17 @@ client.on("message", (message) => {
       if(err) throw err;
     });
     message.channel.send('Saved ' + pitch + ' for ' + name);
+  }
+  else if(message.content.includes("Slayers") || message.content.includes("slayers")){
+    message.channel.send("FTS!");
+  }
+  else if(message.content.includes("Blue") || message.content.includes("Llama") || message.content.includes("blue ") || message.content.includes("llama ")){
+    message.channel.send(":large_blue_circle: <:llama:519631635482935296> :arrow_right: :snake: :question:");
+  }
+  else if(message.content.includes("Peppers") || message.content.includes("peppers") || message.content.includes("Pep") || message.content.includes("pep ")){
+    message.channel.send(":hot_pepper: is the GOAT");
+  }
+  else if(message.content.includes("Joe ") || message.content.includes("joe")){
+    message.channel.send("<:JoeSux:504491684558798858>");
   }
 });
