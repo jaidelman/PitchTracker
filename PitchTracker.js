@@ -65,14 +65,20 @@ client.on("message", (message) => {
         if(Number(curNum)){
           if(Number(curNum)<10) digits = 1;
           else if(Number(curNum)<100) digits = 2;
-          else digits = 3;
+          else if(Number(curNum)<1000) digits = 3;
+          else digits = 4;
 
           if(Number(curNum)>500) avg += Number(curNum);
           else avg = avg + 1000 + Number(curNum);
           total += Number(curNum);
           pos = pos+digits+1;
 
-          barGraph[Math.floor(Number(curNum)/100)] += 1;
+          //If number isn't 1000
+          if(digits<4){
+            barGraph[Math.floor(Number(curNum)/100)] += 1;
+          }
+          else barGraph[9] += 1;
+
 
           num[count] = Number(curNum);
           count++;
@@ -115,7 +121,7 @@ client.on("message", (message) => {
       }
       else{
 
-        barString[0] = "       ";
+        barString[0] = "       "; //Extra spaces to make graph even
         barString[1] = " ";
         barString[2] = "";
         barString[3] = "";
@@ -133,9 +139,10 @@ client.on("message", (message) => {
           }
 
         }
-        for(var i = 0; i<10; i++){
+        for(var i = 0; i<9; i++){
           message.channel.send( (100*i) + "-" + ((100*i)+99) + ": " + barString[i]);
         }
+        message.channel.send("900-1000 : " + barString[9]); //For case 900-1000
       }
       avg2 = 0;
       num = [];
@@ -194,3 +201,5 @@ client.on("message", (message) => {
     message.channel.send("<:JoeSux:504491684558798858>");
   }
 });
+
+client.login("NDMzMzExMjMwMTQ5NjU2NTc2.Dub5Bw.7SsGGolV0w2sw7kOPj4viJU4huI");
