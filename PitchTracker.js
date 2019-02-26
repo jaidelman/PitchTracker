@@ -7,35 +7,36 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-var fs = require('fs'); //For files
-
-var space = 0; //Stores where the " " is in a string
-var pitch = 0; //Stores the current pitch
-var wrappedTotal = 0 ; //This stores the total to calculate average in a wrapped context
-var wrappedAvg = 0; //This stores the wrapped average
-var total = 0; //Stores the total of the pitches to help calculate average
-var curNum = 0; //Stores the pitch on the line we are reading
-var pos = 0; //To hold current position in the file
-var newLine; //To store where the '\n' occurs in a line
-var count = 0; //Stores # of pitches in file
-var digits; //Stores the number of digits in a pitch
-var found = false; //Stores if the file has been found or not
-var listOfPitches = []; //This array holds the pitches in the file
-var listOfPitches2 = []; //This array holds the pithces in a wrapped context
-var standardDeviation = 0; //This stores the standard deviation
-var standardDeviationWrapped = 0; //This stores the standard deviation wrapped (1 is next to 1000)
-var name; //Stores the name of the player in the requested file
-var max; //To store the max in a comparison
-var min; //To store the min in a comparison
-var result; //Stores the correct pitch for calcluation purposes
-var barGraph = [10]; //To store the count of pitches in the range of 0-99, 100-199...
-var barString = [10]; //To print a * for each pitch in each range
 
 client.on("ready", () => {
   console.log("I am ready!");
 });
 
 client.on("message", (message) => {
+
+  let fs = require('fs'); //For files
+
+  let space = 0; //Stores where the " " is in a string
+  let pitch = 0; //Stores the current pitch
+  let wrappedTotal = 0 ; //This stores the total to calculate average in a wrapped context
+  let wrappedAvg = 0; //This stores the wrapped average
+  let total = 0; //Stores the total of the pitches to help calculate average
+  let curNum = 0; //Stores the pitch on the line we are reading
+  let pos = 0; //To hold current position in the file
+  let newLine; //To store where the '\n' occurs in a line
+  let count = 0; //Stores # of pitches in file
+  let digits; //Stores the number of digits in a pitch
+  let found = false; //Stores if the file has been found or not
+  let listOfPitches = []; //This array holds the pitches in the file
+  let listOfPitches2 = []; //This array holds the pithces in a wrapped context
+  let standardDeviation = 0; //This stores the standard deviation
+  let standardDeviationWrapped = 0; //This stores the standard deviation wrapped (1 is next to 1000)
+  let name; //Stores the name of the player in the requested file
+  let max; //To store the max in a comparison
+  let min; //To store the min in a comparison
+  let result; //Stores the correct pitch for calcluation purposes
+  let barGraph = [10]; //To store the count of pitches in the range of 0-99, 100-199...
+  let barString = [10]; //To print a * for each pitch in each range
 
   // Prints your list
   if(message.content.startsWith("!list") || message.content.startsWith("!bar")){
@@ -211,4 +212,9 @@ client.on("message", (message) => {
   else if(message.content.includes("Joe ") || message.content.includes("joe")){
     message.channel.send("<:JoeSux:504491684558798858>");
   }
+  else if(message.content.includes("demand")){
+    message.channel.send("No");
+  }
 });
+
+client.login("NDMzMzExMjMwMTQ5NjU2NTc2.DvCWAg._ZaHZXBt60ktgphtjO8jKzll2II");
