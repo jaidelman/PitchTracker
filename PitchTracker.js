@@ -1,6 +1,6 @@
 /*  PitchTracker.js
     Josh Aidelman
-    Last updated December 22 */
+    Last updated Feb 26, 2019 */
 
 
 //For using the discord client
@@ -216,5 +216,3 @@ client.on("message", (message) => {
     message.channel.send("No");
   }
 });
-
-client.login("NDMzMzExMjMwMTQ5NjU2NTc2.DvCWAg._ZaHZXBt60ktgphtjO8jKzll2II");
